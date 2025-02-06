@@ -18,5 +18,11 @@ pipeline{
                 echo "App started successfully"
             }
         }
+        stage('Deploy') {
+            steps {
+                echo 'Deploy process (set up manual deployment or server integration)'
+            }
+        }
+        
     }
 }
