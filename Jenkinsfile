@@ -1,28 +1,25 @@
-pipeline{
+pipeline {
     agent any
-    tools {nodejs "my-nodejs"}
-    stages{
-        stage("Build"){
-            steps{
-                nodejs("my-nodejs") {
-                    sh 'npm install'
-                    sh 'npm build'
-                }
-            }
-        }
-        stage("Start"){
-            steps{
-                nodejs("my-nodejs") {
-                    sh 'npm start'
-                }
-                echo "App started successfully"
-            }
-        }
-        stage('Deploy') {
+    stages {      
+        stage("Copy file to Docker server"){
             steps {
-                echo 'Deploy process (set up manual deployment or server integration)'
+				
+                sh "scp -r /var/lib/jenkins/workspace/66026213-nextjs/* root@43.208.253.87:~/66026213-nextjs"
             }
         }
         
+        stage("Build Docker Image") {
+            steps {
+                //path yaml files
+				ansiblePlaybook playbook: '/var/lib/jenkins/workspace/66026213-nextjs/playbooks/build.yaml'
+            }    
+        } 
+        
+        stage("Create Docker Container") {
+            steps {
+                //path yaml files
+				ansiblePlaybook playbook: '/var/lib/jenkins/workspace/66026213-nextjs/playbooks/deploy.yaml'
+            }    
+        } 
     }
 }
