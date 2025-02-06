@@ -1,20 +1,21 @@
-FROM node:18-alpine
+FROM node:18-alpine AS base
 
-# ตั้ง working directory
+# สร้างโฟลเดอร์ที่จะใช้เก็บโค้ดของคุณใน Docker image
 WORKDIR /app
 
-# คัดลอก package files และติดตั้ง dependencies
 COPY package*.json ./
-RUN npm install --production
 
-# คัดลอก source code ทั้งหมด
+# ติดตั้งแพ็คเกจที่จำเป็นและทำความสะอาดแคช
+RUN npm install --force
+
+# คัดลอกโค้ดของคุณไปยัง Docker image
 COPY . .
 
-# Build แอป Next.js
+# สร้างและสร้างแอพ Next.js ของคุณ
 RUN npm run build
 
-# เปิด port ที่ต้องการ (ตัวอย่างใช้ 3000)
+# กำหนดพอร์ตที่แอพของคุณจะทำงานอยู่
 EXPOSE 3000
 
-# รันแอปใน production mode
-CMD ["npm", "start"]
+# คำสั่งที่ใช้เริ่มแอพ Next.js
+CMD ["npm", "run","dev"]
